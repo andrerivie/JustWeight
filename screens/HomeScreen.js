@@ -19,18 +19,16 @@ export default class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
-  constructor(props) {
-    super(props);
-    this.state = {
-      pushups: '',
-      pullups: '',
-      handstand: '',
-      leglifts: '',
-      squats: ''}
-  }
+
 
   render() {
-    AsyncStorage.getItem('pushups').then((res) => console.log(res))
+    const newUserCheck = async () => {
+      let counter = await AsyncStorage.getItem('counter')
+      if (!counter || counter === NaN) {
+        await AsyncStorage.setItem('counter', '1')
+      }
+    }
+    newUserCheck()
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
@@ -55,31 +53,16 @@ export default class HomeScreen extends React.Component {
             </View>
 
             <Text style={styles.getStartedText}>
-              Welcome to JustWeight!
+              Welcome to JustWeight!!
             </Text>
             <TextInput
               style={{height: 40}}
               placeholder="Type here to translate!"
               keyboardType="numeric"
-              onChangeText={
-                async (pushups) => {
-                  this.setState({pushups});
-                  console.log(new Date())
-                }
-               }
-               onSubmitEditing={
-                 async () => {
-                   try {
-                     console.log(new Date())
-                     await AsyncStorage.setItem(`pushups`, `${this.state.pushups}`)
-                   } catch (error) {
-                     console.log(error)
-                   }
-                 }
-               }
+
         />
         <Text style={{padding: 10, fontSize: 42}}>
-          {this.state.pushups}
+          WELCOME
         </Text>
 
           </View>
