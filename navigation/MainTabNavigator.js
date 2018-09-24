@@ -4,7 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
+import DataScreen from '../screens/DataScreen';
 import WorkoutScreen from '../screens/WorkoutScreen'
 
 const HomeStack = createStackNavigator({
@@ -25,11 +25,11 @@ HomeStack.navigationOptions = {
   ),
 };
 
-const LinksStack = createStackNavigator({
-  Links: LinksScreen,
+const DataStack = createStackNavigator({
+  Data: DataScreen,
 });
 
-LinksStack.navigationOptions = {
+DataStack.navigationOptions = {
   tabBarLabel: 'Data',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
@@ -55,6 +55,6 @@ WorkoutStack.navigationOptions = {
 
 export default createBottomTabNavigator({
   HomeStack,
-  LinksStack,
+  DataStack,
   WorkoutStack,
 });

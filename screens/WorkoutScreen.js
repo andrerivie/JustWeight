@@ -7,6 +7,7 @@ import {
   ScrollView,
   TextInput,
   AsyncStorage,
+  Button
 } from 'react-native'
 // import { ExpoConfigView } from '@expo/samples';
 
@@ -19,23 +20,25 @@ export default class WorkoutScreen extends React.Component {
     super(props)
     const dateNow = new Date();
     const dateString = dateNow.toDateString()
+    const startTime = `${dateNow.getHours()}:${dateNow.getMinutes()}`
     const setNewWorkout = async () => {
       const counter = await AsyncStorage.getItem('counter')
       await AsyncStorage.setItem(`WID${counter}`,
         JSON.stringify({
+          id: counter,
           date: dateString,
-          set1: {
-            pushups: '', pullups: '', handstand: '', lls: '', squats: ''
-          },
-          set2: {
-            pushups: '', pullups: '', handstand: '', lls: '', squats: ''
-          },
-          set3: {
-            pushups: '', pullups: '', handstand: '', lls: '', squats: ''
-          },
+          startTime: startTime,
+          endTime: '',
+          exercises: {
+            PUSHUPS: [],
+            PULLUPS: [],
+            HANDSTAND: [],
+            LEGLIFTS: [],
+            SQUATS: [],
+          }
         }))
       await AsyncStorage.setItem('counter', `${(parseInt(counter)+1)}`)
-      const data = await AsyncStorage.getItem('WID2')
+      const data = await AsyncStorage.getItem(`WID${counter}`)
       console.log(JSON.parse(data))
     }
     setNewWorkout()
@@ -59,7 +62,6 @@ export default class WorkoutScreen extends React.Component {
         }],
       set: 1,
       counter: 0,
-      date: dateString,
     }
   }
 
@@ -67,13 +69,39 @@ export default class WorkoutScreen extends React.Component {
     let wkout = this.state;
     let num = (wkout.counter + 5) % 5;
     let ex = wkout.ex[num]
+    let name = ex.name
     const getData = async () => {
-      const data = await AsyncStorage.getAllKeys()
-      console.log('ALL KEYS', data)
+      const counter = await AsyncStorage.getItem('counter')
+      const id = parseInt(counter - 1)
+      const response = await AsyncStorage.getItem(`WID${id}`)
+      const data = JSON.parse(response)
+      return {data, id}
     }
+    if (this.state.set === 4) {
+      return (
+        <View style={styles.container}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+          <View style={styles.welcomeContainer}>
+            <Text style={styles.workoutText}>
+              WORKOUT COMPLETE - NICE WORK!
+            </Text>
+            <Button
+              onPress={async () => {
+                this.setNewWorkout()
+                this.props.navigation.navigate('Data')}}
+              title="Go to Data"
+              color="#841584"
+              />
+            </View>
+            </ScrollView>
+            </View>
+      )
+    }
+
+
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer} >
           <View style={styles.welcomeContainer}>
             <Text style={styles.workoutText}>
               SET: {wkout.set} {'\n'}
@@ -83,18 +111,36 @@ export default class WorkoutScreen extends React.Component {
             style={{height: 40}}
             keyboardType="numeric"
             autoFocus={true}
+            blurOnSubmit={false}
             onChangeText={(count) =>
               ex.count = count
               }
-            onSubmitEditing={async () =>
-              console.log(getData(), await AsyncStorage.getItem('counter'))
-              //  async () => {
-                //  try {
-                //    await AsyncStorage.setItem(`${wkout.date}`,
-                //     `${ex.name}-${wkout.set}: ${ex.count}`);
-                //  } catch (error) {
-                //    console.log(error)
+            onSubmitEditing={async () => {
+              const {data} = await getData()
+                 try {
+                   console.log(data)
+                   const delta = {
+                     exercises: {
+                       [name]: [...data.exercises[name], ex.count]
+                     }
+                   }
+                   await AsyncStorage.mergeItem(`WID${data.id}`, JSON.stringify(delta))
+                   if (num === 4 && this.state.counter !== 0) {
+                     await this.setState({
+                       set: parseInt(this.state.set + 1),
+                       counter: parseInt(this.state.counter+1)
+                     })
+                   } else {
+                   await this.setState({
+                     counter: parseInt(this.state.counter+1)
+                   })}
+
+
+
+                 } catch (error) {
+                   console.log(error)
                  }
+            }}
 
 
              />
