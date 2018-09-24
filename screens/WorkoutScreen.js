@@ -11,6 +11,31 @@ import {
 } from 'react-native'
 // import { ExpoConfigView } from '@expo/samples';
 
+const defaultState = {
+  ex:
+    [{
+      name: 'PUSHUPS',
+      count: 0
+    },{
+      name: 'PULLUPS',
+      count: 0
+    },{
+      name: 'HANDSTAND',
+      count: 0
+    },{
+      name: 'LEGLIFTS',
+      count: 0
+    },{
+      name: 'SQUATS',
+      count: 0
+    }],
+  set: 1,
+  counter: 0,
+  workoutCompleted: false,
+  workoutCreated: false,
+  ready: false
+}
+
 export default class WorkoutScreen extends React.Component {
   static navigationOptions = {
     header: null,
@@ -18,54 +43,52 @@ export default class WorkoutScreen extends React.Component {
 
   constructor(props) {
     super(props)
+    this.state = defaultState
+    this.setNewWorkout = this.setNewWorkout.bind(this)
+  }
+
+  setNewWorkout = async () => {
     const dateNow = new Date();
     const dateString = dateNow.toDateString()
-    const startTime = `${dateNow.getHours()}:${dateNow.getMinutes()}`
-    const setNewWorkout = async () => {
-      const counter = await AsyncStorage.getItem('counter')
-      await AsyncStorage.setItem(`WID${counter}`,
-        JSON.stringify({
-          id: counter,
-          date: dateString,
-          startTime: startTime,
-          endTime: '',
-          exercises: {
-            PUSHUPS: [],
-            PULLUPS: [],
-            HANDSTAND: [],
-            LEGLIFTS: [],
-            SQUATS: [],
-          }
-        }))
-      await AsyncStorage.setItem('counter', `${(parseInt(counter)+1)}`)
-      const data = await AsyncStorage.getItem(`WID${counter}`)
-      console.log(JSON.parse(data))
+    if (dateNow.getMinutes().toString().length === 2) {
+      var startTime = `${dateNow.getHours()}:${dateNow.getMinutes()}`
+    } else {
+      var startTime = `${dateNow.getHours()}:0${dateNow.getMinutes()}`
     }
-    setNewWorkout()
-    this.state = {
-      ex:
-        [{
-          name: 'PUSHUPS',
-          count: 0
-        },{
-          name: 'PULLUPS',
-          count: 0
-        },{
-          name: 'HANDSTAND',
-          count: 0
-        },{
-          name: 'LEGLIFTS',
-          count: 0
-        },{
-          name: 'SQUATS',
-          count: 0
-        }],
-      set: 1,
-      counter: 0,
+    const counter = await AsyncStorage.getItem('counter')
+    await AsyncStorage.setItem(`WID${counter}`,
+      JSON.stringify({
+        id: counter,
+        date: dateString,
+        startTime: startTime,
+        endTime: '',
+        exercises: {
+          PUSHUPS: [],
+          PULLUPS: [],
+          HANDSTAND: [],
+          LEGLIFTS: [],
+          SQUATS: [],
+        }
+      }))
+    await AsyncStorage.setItem('counter', `${(parseInt(counter)+1)}`)
+    const data = await AsyncStorage.getItem(`WID${counter}`)
+    console.log(JSON.parse(data))
+  }
+
+  async componentDidMount() {
+    this.setState(defaultState)
+  }
+
+  async componentDidUpdate() {
+    if (this.state.workoutCompleted === true) {
+      this.setState({
+        workoutCompleted: false
+      })
     }
   }
 
   render() {
+
     let wkout = this.state;
     let num = (wkout.counter + 5) % 5;
     let ex = wkout.ex[num]
@@ -83,11 +106,23 @@ export default class WorkoutScreen extends React.Component {
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
           <View style={styles.welcomeContainer}>
             <Text style={styles.workoutText}>
-              WORKOUT COMPLETE - NICE WORK!
+              WORKOUT COMPLETE - GET IT GET ITTT!
             </Text>
             <Button
               onPress={async () => {
-                this.setNewWorkout()
+
+                const {data} = await getData();
+                const dateNow = new Date();
+                if (dateNow.getMinutes().toString().length === 2) {
+                  var endTime = `${dateNow.getHours()}:${dateNow.getMinutes()}`
+                } else {
+                  var endTime = `${dateNow.getHours()}:0${dateNow.getMinutes()}`
+                }
+                await AsyncStorage.mergeItem(`WID${data.id}`, JSON.stringify({endTime: endTime}))
+                this.setState(defaultState)
+                this.setState({
+                  workoutCompleted: true
+                })
                 this.props.navigation.navigate('Data')}}
               title="Go to Data"
               color="#841584"
@@ -97,7 +132,6 @@ export default class WorkoutScreen extends React.Component {
             </View>
       )
     }
-
 
     return (
       <View style={styles.container}>
@@ -112,13 +146,20 @@ export default class WorkoutScreen extends React.Component {
             keyboardType="numeric"
             autoFocus={true}
             blurOnSubmit={false}
+            ref={input => {this.textInput = input}}
             onChangeText={(count) =>
               ex.count = count
               }
             onSubmitEditing={async () => {
-              const {data} = await getData()
                  try {
-                   console.log(data)
+                    if (this.state.workoutCreated === false) {
+                      await this.setNewWorkout()
+                      await this.setState({
+                        workoutCreated: true
+                      })
+                    }
+
+                    const {data} = await getData()
                    const delta = {
                      exercises: {
                        [name]: [...data.exercises[name], ex.count]
@@ -133,7 +174,9 @@ export default class WorkoutScreen extends React.Component {
                    } else {
                    await this.setState({
                      counter: parseInt(this.state.counter+1)
-                   })}
+                   })
+                  }
+                  this.textInput.clear()
 
 
 
@@ -166,14 +209,18 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 30,
+    alignItems: 'center',
   },
   welcomeContainer: {
+    flex: 1,
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 20,
   },
   workoutText: {
+    flex: 1,
     fontSize: 40,
+    alignItems: 'center'
   },
   welcomeImage: {
     width: 100,
