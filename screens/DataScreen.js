@@ -73,7 +73,7 @@ export default class DataScreen extends React.Component {
           else return (
             <View key ={workout.id} style={styles.wkoutContainer}>
             <View style={styles.wkoutLeft}>
-              <Text key={workout.id} style={styles.wkoutTitle}>Workout Number: {workout.id}</Text>
+              <Text key={workout.id} style={styles.wkoutTitle}>Workout {workout.id}</Text>
               <Text>Date: {workout.date}</Text>
               <Text>Start Time: {workout.startTime}</Text>
               <Text>End Time: {workout.endTime}</Text>
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 30,
     paddingLeft: 20,
-    backgroundColor: '#fff',
+    backgroundColor: 'lightgrey',
   },
   wkoutContainer: {
     flex: 1,

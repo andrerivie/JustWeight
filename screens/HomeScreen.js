@@ -10,7 +10,6 @@ import {
   Button
 } from 'react-native';
 
-import {getAllData, getMax} from '../utils'
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -140,10 +139,10 @@ export default class HomeScreen extends React.Component {
           </View>
           <View style={{alignItems: 'center'}}>
         <Text style={{padding: 10, fontSize: 42}}>
-          Your Stats
+          Achievements
         </Text>
         <Text>Total Workouts: {this.state.totalWorkouts}{`\n`}</Text>
-        <Text style={{fontWeight: 'bold'}}>Personal Records</Text>
+        <Text style={{fontWeight: 'bold'}}>Personal Records:</Text>
         <Text>Pushups: {this.state.pushMax}</Text>
         <Text>Pullups: {this.state.pullMax}</Text>
         <Text>Handstand: {this.state.handMax} sec</Text>

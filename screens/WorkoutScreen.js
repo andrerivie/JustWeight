@@ -132,6 +132,29 @@ export default class WorkoutScreen extends React.Component {
             </View>
       )
     }
+    if (this.state.ready === false) {
+      return (
+        <View style={styles.container}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer} >
+          <View style={styles.workoutTextContainer}>
+            <Text style={styles.workoutText}>
+              The Workout{'\n'}
+            </Text>
+            <Text style={{fontSize: 24, textAlign: 'center'}}>Three sets of five body weight exercises: {'\n\n'}Pushups{'\n'}Pullups{'\n'}Handstands{'\n'}Leg Lifts{'\n'}Squats{'\n\n'}meant to be done with 30-45 seconds of rest.{'\n\n'}</Text>
+            <Button
+            title={`READY`}
+            color='purple'
+            onPress={() => {
+              this.setState({
+                ready: true
+              })
+            }}
+            />
+            </View>
+            </ScrollView>
+            </View>
+      )
+    }
 
     return (
       <View style={styles.container}>
@@ -142,10 +165,13 @@ export default class WorkoutScreen extends React.Component {
               EXERCISE: {ex.name}
             </Text>
             <TextInput
-            style={{height: 40}}
+            style={{height: 200, width: 300, fontSize: 60, textAlign: 'center'}}
             keyboardType="numeric"
             autoFocus={true}
+            caretHidden={true}
+            underlineColorAndroid='transparent'
             blurOnSubmit={false}
+            placeholder={`reps/${'\n'}seconds`}
             ref={input => {this.textInput = input}}
             onChangeText={(count) =>
               ex.count = count
@@ -197,15 +223,14 @@ export default class WorkoutScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    marginTop: 30,
+    backgroundColor: 'lightgrey',
   },
   developmentModeText: {
     marginBottom: 20,
     color: 'rgba(0,0,0,0.4)',
     fontSize: 14,
     lineHeight: 19,
-    textAlign: 'center',
+    alignItems: 'center',
   },
   contentContainer: {
     paddingTop: 30,
@@ -217,10 +242,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 20,
   },
+  workoutTextContainer: {
+    flex: 1,
+    padding: 20,
+  },
   workoutText: {
     flex: 1,
     fontSize: 40,
-    alignItems: 'center'
+    textAlign: 'center'
   },
   welcomeImage: {
     width: 100,
