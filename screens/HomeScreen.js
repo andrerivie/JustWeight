@@ -141,13 +141,13 @@ export default class HomeScreen extends React.Component {
         <Text style={{padding: 10, fontSize: 42}}>
           Achievements
         </Text>
-        <Text>Total Workouts: {this.state.totalWorkouts}{`\n`}</Text>
-        <Text style={{fontWeight: 'bold'}}>Personal Records:</Text>
-        <Text>Pushups: {this.state.pushMax}</Text>
-        <Text>Pullups: {this.state.pullMax}</Text>
-        <Text>Handstand: {this.state.handMax} sec</Text>
-        <Text>Leg Lifts: {this.state.legMax}</Text>
-        <Text>Squats: {this.state.squatMax}</Text>
+        <Text style={{fontSize: 24}}>Total Workouts: {this.state.totalWorkouts}{`\n`}</Text>
+        <Text style={{fontSize: 24}}>Personal Records{'\n'}</Text>
+        <Text style={{fontSize: 18}}>Pushups: {this.state.pushMax}</Text>
+        <Text style={{fontSize: 18}}>Pullups: {this.state.pullMax}</Text>
+        <Text style={{fontSize: 18}}>Handstand: {this.state.handMax} sec</Text>
+        <Text style={{fontSize: 18}}>Leg Lifts: {this.state.legMax}</Text>
+        <Text style={{fontSize: 18}}>Squats: {this.state.squatMax}{'\n\n'}</Text>
         </View>
         <Button
           onPress={()=>this.setState({

@@ -48,6 +48,12 @@ export default class DataScreen extends React.Component {
   }
   }
 
+  componentWillReceiveProps() {
+    this.setState({
+      loading: true
+    })
+  }
+
 
   render() {
     const workouts = this.state.workouts
@@ -55,21 +61,21 @@ export default class DataScreen extends React.Component {
       return (<Text>Loading...</Text>
 
       )
+    } else if (workouts.length === 1) {
+      return (
+        <ScrollView style={styles.container}>
+            <View >
+            <Text style={styles.nodata}>Complete a workout to see stats here!</Text>
+            </View>
+            </ScrollView>
+
+      )
     } else {
     return (
-
-      <ScrollView style={{paddingTop: 24}}>
-        <Button
-        onPress={()=>this.setState({
-          loading: true
-        })}
-        title='Refresh Data'
-        color="#841584"
-        />
         <ScrollView style={styles.container}>
 
         {workouts.slice(0).reverse().map((workout, index) => {
-          if (workout === null || !workout.exercises.PUSHUPS[0]) {}
+          if (workout === null) {}
           else return (
             <View key ={workout.id} style={styles.wkoutContainer}>
             <View style={styles.wkoutLeft}>
@@ -95,7 +101,6 @@ export default class DataScreen extends React.Component {
         </View>
 
       </ScrollView>
-      </ScrollView>
     );
   }
 }
@@ -105,8 +110,8 @@ export default class DataScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 30,
-    paddingLeft: 20,
+    paddingTop: 40,
+    paddingLeft: 40,
     backgroundColor: 'lightgrey',
   },
   wkoutContainer: {
@@ -123,5 +128,11 @@ const styles = StyleSheet.create({
   },
   wkoutTitle: {
     fontWeight: 'bold'
+  },
+  nodata: {
+    padding: 30,
+    fontSize: 24,
+    textAlign: 'center'
+
   }
 });

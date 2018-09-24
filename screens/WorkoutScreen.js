@@ -123,7 +123,7 @@ export default class WorkoutScreen extends React.Component {
                 this.setState({
                   workoutCompleted: true
                 })
-                this.props.navigation.navigate('Data')}}
+                this.props.navigation.navigate('Data', { loading: true})}}
               title="Go to Data"
               color="#841584"
               />
@@ -140,7 +140,7 @@ export default class WorkoutScreen extends React.Component {
             <Text style={styles.workoutText}>
               The Workout{'\n'}
             </Text>
-            <Text style={{fontSize: 24, textAlign: 'center'}}>Three sets of five body weight exercises: {'\n\n'}Pushups{'\n'}Pullups{'\n'}Handstands{'\n'}Leg Lifts{'\n'}Squats{'\n\n'}meant to be done with 30-45 seconds of rest.{'\n\n'}</Text>
+            <Text style={{fontSize: 24, textAlign: 'center'}}>Three sets of five body weight exercises: {'\n\n'}Pushups{'\n'}Pullups{'\n'}Handstands{'\n'}Leg Lifts{'\n'}Squats{'\n\n'}meant to be done with 30-45 seconds of rest{'\n\n'}</Text>
             <Button
             title={`READY`}
             color='purple'
